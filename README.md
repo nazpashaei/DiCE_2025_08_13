@@ -19,7 +19,7 @@ It performs the following steps:
 ## Installation
 
 # Install required dependencies
-install.packages(c("devtools","dplyr", "tibble", "FSelectorRcpp", "igraph", "data.table", "afc"))
+install.packages(c("devtools","dplyr", "tibble", "FSelectorRcpp", "igraph", "data.table", "afc","STRINGdb"))
 
 ```R
 library(devtools)
