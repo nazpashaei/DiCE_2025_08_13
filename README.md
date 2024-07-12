@@ -16,7 +16,9 @@ It performs the following steps:
 5. Analyzes the PPI network using centrality measures (Eigenvector and Betweenness) for Tumor and Normal samples.
 6. Combines centrality rankings into an ensemble ranking to prioritize key genes.
 
+```R
 ##Installation
+
 Step 1: Install Required Dependencies
 First, ensure that all necessary packages are installed:
 install.packages(c("devtools", "dplyr", "tibble", "FSelectorRcpp", "igraph", "data.table", "afc"))
