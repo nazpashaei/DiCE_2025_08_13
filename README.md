@@ -16,16 +16,18 @@ It performs the following steps:
 5. Analyzes the PPI network using centrality measures (Eigenvector and Betweenness) for Tumor and Normal samples.
 6. Combines centrality rankings into an ensemble ranking to prioritize key genes.
 
-Installation
+##Installation
 Step 1: Install Required Dependencies
 First, ensure that all necessary packages are installed:
 install.packages(c("devtools", "dplyr", "tibble", "FSelectorRcpp", "igraph", "data.table", "afc"))
+
 Step 2: Install Bioconductor Package
 Ensure you have the BiocManager package installed, then use it to install the STRINGdb package from Bioconductor:
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
 }
 BiocManager::install("STRINGdb")
+
 Step 3: Install Package from GitHub
 Use devtools to install the DiffCentEn package from GitHub:
 devtools::install_github("nazpashaei/DiffCentEn")
