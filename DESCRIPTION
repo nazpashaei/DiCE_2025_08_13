@@ -1,10 +1,10 @@
 Package: DiffCentEn
-Title: What the Package Does (DiffCentEn: Differential Centrality-Ensemble Analysis Based on Gene Expression Profiles and Protein-Protein Interaction Network)
+Title: DiffCentEn: Differential Centrality-Ensemble Analysis Based on Gene Expression Profiles and Protein-Protein Interaction Network
 Version: 0.0.0.9000
 Authors@R: 
     person("Elnaz", "Pashaei", , "epashaei@iu.edu", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0000-0001-9391-9785"))
-Description: What the package does (Our package, DiffCentEn, is designed to identify and prioritize disease-related genes through a multi-phase approach involving differential expression analysis, information gain filtering, PPI network analysis, and ensemble ranking).
+Description: Our package, DiffCentEn, is designed to identify and prioritize disease-related genes through a multi-phase approach involving differential expression analysis, information gain filtering, PPI network analysis, and ensemble ranking.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
