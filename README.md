@@ -34,10 +34,6 @@ Step 3: Install Package from GitHub
 Use devtools to install the DiffCentEn package from GitHub:
 devtools::install_github("nazpashaei/DiffCentEn")
 
-```R
-library(devtools)
-devtools::install_github("nazpashaei/DiffCentEn")
-
 
 ## Example data preparation
 data <- list(
