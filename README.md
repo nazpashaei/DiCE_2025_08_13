@@ -24,7 +24,7 @@ You can install this package using `devtools`:
 devtools::install_github("nazpashaei/DiffCentEn")
 
 
-# Example data preparation
+## Example data preparation
 data <- list(
   data = data.frame(
     gene1 = c(1, 2),
@@ -38,9 +38,9 @@ data <- list(
   )
 )
 
-# Run Differential Centrality-Ensemble Analysis
+## Run Differential Centrality-Ensemble Analysis
 KeyGenes <- DiffCentEn_function(data)
 View(KeyGenes)
 
-Citation
+##Citation
 
