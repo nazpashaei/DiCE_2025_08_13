@@ -17,10 +17,14 @@ It performs the following steps:
 6. Combines centrality rankings into an ensemble ranking to prioritize key genes.
 
 ## Installation
+install.packages("devtools")
 
+# Install required dependencies
+install.packages(c("dplyr", "tibble", "FSelectorRcpp", "igraph", "data.table", "afc"))
 You can install this package using `devtools`:
 
 ```R
+
 devtools::install_github("nazpashaei/DiffCentEn")
 
 
@@ -39,6 +43,7 @@ data <- list(
 )
 
 ## Run Differential Centrality-Ensemble Analysis
+library(DiffCentEn)
 KeyGenes <- DiffCentEn_function(data)
 View(KeyGenes)
 
