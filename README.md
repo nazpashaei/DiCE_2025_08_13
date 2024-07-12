@@ -20,10 +20,10 @@ It performs the following steps:
 
 # Install required dependencies
 install.packages(c("devtools","dplyr", "tibble", "FSelectorRcpp", "igraph", "data.table", "afc"))
+
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-
-BiocManager::install("STRINGdb")
+    BiocManager::install("STRINGdb")
 
 ```R
 library(devtools)
