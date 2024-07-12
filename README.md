@@ -39,9 +39,14 @@ data <- list(
     logFC = c(2, -2)
   )
 )
+saveRDS(object = data,
+        file = "data.RDS",
+        compress = FALSE)
+
 
 ## Run Differential Centrality-Ensemble Analysis
 library(DiffCentEn)
+data <- readRDS("~/Ovarian_cancer.RDS");#Downloading and Reading an RDS File
 KeyGenes <- DiffCentEn_function(data)
 View(KeyGenes)
 
