@@ -17,14 +17,12 @@ It performs the following steps:
 6. Combines centrality rankings into an ensemble ranking to prioritize key genes.
 
 ## Installation
-install.packages("devtools")
 
 # Install required dependencies
-install.packages(c("dplyr", "tibble", "FSelectorRcpp", "igraph", "data.table", "afc"))
-You can install this package using `devtools`:
+install.packages(c("devtools","dplyr", "tibble", "FSelectorRcpp", "igraph", "data.table", "afc"))
 
 ```R
-
+library(devtools)
 devtools::install_github("nazpashaei/DiffCentEn")
 
 
