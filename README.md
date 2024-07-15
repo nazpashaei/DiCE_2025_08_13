@@ -40,7 +40,7 @@ This section provides an example of how to prepare and save the data required fo
 
 ### Data Structure
 - `data`: A list of two data frames:
-  1. `data`: Gene expression data with class labels. The last column should be the class label (e.g., "Tumor" or "Normal").
+  1. `data`: Gene expression data with class labels. The last column should be the class label ("Tumor" and "Normal").
   2. `topGenes`: Information about differentially expressed genes (DEGs), including gene symbols, adjusted p-values, and log fold changes.
 
 
