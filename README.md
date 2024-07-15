@@ -62,7 +62,7 @@ saveRDS(object = data,
 
 #### Parameters
 - `data`: A list of two data frames containing gene expression data with a class label at the last column and a list of information about DEGs analysis.
-- `regulation_status`: A character vector indicating the regulation status of genes. It must be one of the following:
+- `regulation_status`: A character Value indicating the regulation status of genes. It must be one of the following:
   - `"Up"`: For upregulated genes.
   - `"Down"`: For downregulated genes.
   - `"Both"`: For both upregulated and downregulated genes.
