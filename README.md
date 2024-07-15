@@ -34,12 +34,21 @@ Step 3: Install Package from GitHub
 Use devtools to install the DiffCentEn package from GitHub:
 devtools::install_github("nazpashaei/DiffCentEn")
 
+## Usage
+
+#### Parameters
+- `data`: A list of two data frames containing gene expression data with a class label at the last column and a list of information about DEGs analysis.
+- `regulation_status`: A character vector indicating the regulation status of genes. It must be one of the following:
+  - `"Up"`: For upregulated genes.
+  - `"Down"`: For downregulated genes.
+  - `"Both"`: For both upregulated and downregulated genes.
+
 
 ## Example data preparation
 data <- list(
-  data = data.frame(
-    gene1 = c(1, 2),
-    gene2 = c(3, 4),
+  data = data.frame( 
+    gene1 = c(0.938, 1.203),
+    gene2 = c(2.107, 2.057),
     class = c("Tumor", "Normal")
   ),
   topGenes = data.frame(
@@ -56,7 +65,7 @@ saveRDS(object = data,
 ## Run Differential Centrality-Ensemble Analysis
 library(DiffCentEn)
 data <- readRDS("~/Ovarian_cancer.RDS");#Downloading and Reading an RDS File
-KeyGenes <- DiffCentEn_function(data)
+KeyGenes <- DiffCentEn_function(data,regulation_status = "Up");
 View(KeyGenes)
 
 ##Citation
