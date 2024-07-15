@@ -34,17 +34,16 @@ Step 3: Install Package from GitHub
 Use devtools to install the DiffCentEn package from GitHub:
 devtools::install_github("nazpashaei/DiffCentEn")
 
-## Usage
+## Example Data Preparation
 
-#### Parameters
-- `data`: A list of two data frames containing gene expression data with a class label at the last column and a list of information about DEGs analysis.
-- `regulation_status`: A character vector indicating the regulation status of genes. It must be one of the following:
-  - `"Up"`: For upregulated genes.
-  - `"Down"`: For downregulated genes.
-  - `"Both"`: For both upregulated and downregulated genes.
+This section provides an example of how to prepare and save the data required for the `DiffCentEn_function`.
+
+### Data Structure
+- `data`: A list of two data frames:
+  1. `data`: Gene expression data with class labels. The last column should be the class label (e.g., "Tumor" or "Normal").
+  2. `topGenes`: Information about differentially expressed genes (DEGs), including gene symbols, adjusted p-values, and log fold changes.
 
 
-## Example data preparation
 data <- list(
   data = data.frame( 
     gene1 = c(0.938, 1.203),
@@ -60,6 +59,13 @@ data <- list(
 saveRDS(object = data,
         file = "data.RDS",
         compress = FALSE)
+
+#### Parameters
+- `data`: A list of two data frames containing gene expression data with a class label at the last column and a list of information about DEGs analysis.
+- `regulation_status`: A character vector indicating the regulation status of genes. It must be one of the following:
+  - `"Up"`: For upregulated genes.
+  - `"Down"`: For downregulated genes.
+  - `"Both"`: For both upregulated and downregulated genes.
 
 
 ## Run Differential Centrality-Ensemble Analysis
