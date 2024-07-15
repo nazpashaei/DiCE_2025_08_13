@@ -20,7 +20,7 @@
 #' @export
 
 
-DiffCentEn_function <- function(data){
+DiffCentEn_function <- function(data,regulation_status){
 
   library(dplyr)
   library(tibble)
@@ -59,20 +59,25 @@ DiffCentEn_function <- function(data){
 
   #Phase I: Construction of a candidate gene pool by DEA with a loose cutoff
   #=======================================
-  dee=(data$topGenes[(data$topGenes$adj.P.Val<=0.05),])
+ if(regulation_status=="Up"){
+    dee=(data$topGenes[(data$topGenes$adj.P.Val<=0.05)&(data$topGenes$logFC>0),])
+  }else if(regulation_status=="Down"){
+    dee=(data$topGenes[(data$topGenes$adj.P.Val<=0.05)&(data$topGenes$logFC<0),])
+  }else{dee=(data$topGenes[(data$topGenes$adj.P.Val<=0.05),])}
+   
   dee1=dee
   colnames(dee1)=c("gene_name","P.Value","logFC")
 
   #+++++++++++++++++++++++Phase II: Selection of the top discriminative genes from the candidate pool obtained in Phase I using the Information Gain (IG) filter approach.
 
   class=data$data[,ncol(data$data)]
-  data$data=data$data[,colnames(data$data)%in%dee1$gene_name]
   colnames(data$data)<-toupper(colnames(data$data))
+  data$data=data$data[,colnames(data$data)%in%dee1$gene_name]
 
-
+  rownames(data$data)<-NULL
   d_mat11=data$data
   d_mat1=d_mat11
-  #d_mat1=scale(d_mat1) ;
+  d_mat1=scale(d_mat1) ;
   d_mat2=as.data.frame(d_mat1);
 
   newMydata=cbind(d_mat2,class)
