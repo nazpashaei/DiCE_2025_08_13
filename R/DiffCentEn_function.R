@@ -53,6 +53,8 @@ DiffCentEn_function <- function(data){
   colnames(data$data)<-sapply(colnames(data$data), process_gene_names)
   data$topGenes <- subset(data$topGenes, !grepl("LOC", data$topGenes$Gene.symbol))
   data$topGenes <- subset(data$topGenes, !grepl("LINC", data$topGenes$Gene.symbol))
+  data$topGenes$Gene.symbol<-toupper(data$topGenes$Gene.symbol)
+
 
 
   #Phase I: Construction of a candidate gene pool by DEA with a loose cutoff
@@ -64,12 +66,13 @@ DiffCentEn_function <- function(data){
   #+++++++++++++++++++++++Phase II: Selection of the top discriminative genes from the candidate pool obtained in Phase I using the Information Gain (IG) filter approach.
 
   class=data$data[,ncol(data$data)]
-  data$data=data$data[colnames(data$data)%in%dee1$gene_name,]
+  data$data=data$data[,colnames(data$data)%in%dee1$gene_name]
+  colnames(data$data)<-toupper(colnames(data$data))
 
 
-  d_mat11=data$data[,-ncol(data$data)]
+  d_mat11=data$data
   d_mat1=d_mat11
-  d_mat1=scale(d_mat1) ;
+  #d_mat1=scale(d_mat1) ;
   d_mat2=as.data.frame(d_mat1);
 
   newMydata=cbind(d_mat2,class)
