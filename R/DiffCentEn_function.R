@@ -64,7 +64,7 @@ DiffCentEn_function <- function(data){
   #+++++++++++++++++++++++Phase II: Selection of the top discriminative genes from the candidate pool obtained in Phase I using the Information Gain (IG) filter approach.
 
   class=data$data[,ncol(data$data)]
-  data$data=data$data[,dee1$gene_name%in%colnames(data$data)]
+  data$data=data$data[colnames(data$data)%in%dee1$gene_name,]
 
 
   d_mat11=data$data[,-ncol(data$data)]
@@ -151,6 +151,8 @@ DiffCentEn_function <- function(data){
   g <- graph_from_data_frame(sss,directed = FALSE)
   is_weighted(g)
   g <- set_edge_attr(g, "weight", value=(1-(sss$weight))+0.001)
+  E(g)$weight[is.na(E(g)$weight)] <- 1
+
   V(g); E(g)
   gsize(g)
   gorder(g)
@@ -191,6 +193,7 @@ DiffCentEn_function <- function(data){
   g <- graph_from_data_frame(sss,directed = FALSE)
   is_weighted(g)
   g <- set_edge_attr(g, "weight", value=(1-(sss$weight))+0.001)
+  E(g)$weight[is.na(E(g)$weight)] <- 1
   V(g); E(g)
   gsize(g)
   gorder(g)
