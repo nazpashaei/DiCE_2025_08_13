@@ -1,5 +1,5 @@
-Package: DiffCentEn
-Title: DiffCentEn: Differential Centrality-Ensemble Analysis Based on Gene Expression Profiles and Protein-Protein Interaction Network
+Package: DiCE
+Title: DiCE: Differential Centrality-Ensemble Analysis Based on Gene Expression Profiles and Protein-Protein Interaction Network
 Version: 0.0.0.9000
 Authors@R: 
     person("Elnaz", "Pashaei", , "epashaei@iu.edu", role = c("aut", "cre"),
