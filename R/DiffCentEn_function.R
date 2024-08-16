@@ -15,12 +15,12 @@
 #'     data = data.frame(gene1 = c(1, 2), gene2 = c(3, 4), class = c("Tumor", "Normal")),
 #'     topGenes = data.frame(Gene.symbol = c("gene1", "gene2"), adj.P.Val = c(0.01, 0.02), logFC = c(2, -2))
 #'   )
-#'   KeyGenes <- DiffCentEn_function(data)
+#'   KeyGenes <- DiCE_function(data)
 #' }
 #' @export
 
 
-DiffCentEn_function <- function(data,regulation_status){
+DiCE_function <- function(data,regulation_status){
 
   library(dplyr)
   library(tibble)
