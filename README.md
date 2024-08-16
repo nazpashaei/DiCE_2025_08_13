@@ -4,7 +4,7 @@ This R package provides a comprehensive framework for identifying and prioritizi
 
 ## Function Overview
 
-The `DiffCentEn_function` function takes a list of two elements:
+The `DiCE_function` function takes a list of two elements:
 - `data`: A data frame of gene expression data with gene symbols as column names and class labels (Tumor, Normal) in the last column.
 - `topGenes`: A data frame of differentially expressed genes (DEGs) with columns `Gene.symbol`, `adj.P.Val`, and `logFC`.
 
@@ -69,7 +69,7 @@ saveRDS(object = data,
 
 
 ## Run Differential Centrality-Ensemble Analysis
-library(DiffCentEn)
+library(DiCE)
 data <- readRDS("~/Ovarian_cancer.RDS");#Downloading and Reading an RDS File
 KeyGenes <- DiffCentEn_function(data,regulation_status = "Up");
 View(KeyGenes)
