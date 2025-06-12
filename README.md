@@ -31,7 +31,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("STRINGdb")
 
 Step 3: Install Package from GitHub
-Use devtools to install the DiffCentEn package from GitHub:
+Use devtools to install the DiCE package from GitHub:
 devtools::install_github("nazpashaei/DiCE")
 
 ## Example Data Preparation
