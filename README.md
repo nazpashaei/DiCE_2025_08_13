@@ -21,7 +21,7 @@ It performs the following steps:
 
 Step 1: Install Required Dependencies
 First, ensure that all necessary packages are installed:
-install.packages(c("devtools", "dplyr", "tibble", "FSelectorRcpp", "igraph", "data.table", "afc"))
+install.packages(c("devtools", "dplyr", "tibble", "FSelectorRcpp", "igraph", "data.table", "NetWeaver"))
 
 Step 2: Install Bioconductor Package
 Ensure you have the BiocManager package installed, then use it to install the STRINGdb package from Bioconductor:
@@ -36,7 +36,7 @@ devtools::install_github("nazpashaei/DiCE")
 
 ## Example Data Preparation
 
-This section provides an example of how to prepare and save the data required for the `DiffCentEn_function`.
+This section provides an example of how to prepare and save the data required for the `DiCE_function`.
 
 ### Data Structure
 - `data`: A list of two data frames:
@@ -60,13 +60,20 @@ saveRDS(object = data,
         file = "data.RDS",
         compress = FALSE)
 
-#### Parameters
-- `data`: A list of two data frames containing gene expression data with a class label at the last column and a list of information about DEGs analysis.
-- `regulation_status`: A character Value indicating the regulation status of genes. It must be one of the following:
-  - `"Up"`: For upregulated genes.
-  - `"Down"`: For downregulated genes.
-  - `"Both"`: For both upregulated and downregulated genes.
+#########Parameters
+--data: A list of two data frames:
+*data – A data frame containing gene expression values. Gene symbols should be column names, and the last column must  contain class labels (e.g., "Tumor", "Normal").
+*topGenes – A data frame with results from differential expression analysis. Expected columns: Gene.symbol, adj.P.Val, and logFC.
 
+--regulation_status: A character string indicating which genes to consider based on their regulation status. Must be one of:
+"Up": Upregulated genes
+"Down": Downregulated genes
+"Both": Both upregulated and downregulated genes
+
+--species: A character string specifying the organism. Must be one of:
+"human"
+"mouse"
+"rat"
 
 ## Run Differential Centrality-Ensemble Analysis
 library(DiCE)
@@ -75,4 +82,6 @@ KeyGenes <- DiCE_function(data,regulation_status = "Up");
 View(KeyGenes)
 
 ##Citation
-
+DiCE: differential centrality-ensemble analysis based on gene expression profiles and protein-protein interaction network
+Elnaz Pashaei, Sheng Liu, Kailing Li, Yong Zang, Lei Yang, Tim Lautenschlaeger, Jun Huang, Xin Lu, Jun Wan
+bioRxiv 2025.03.14.638654; doi: https://doi.org/10.1101/2025.03.14.638654
