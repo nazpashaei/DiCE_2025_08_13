@@ -1,12 +1,14 @@
 #' Differential Centrality-Ensemble Analysis Based on Gene Expression Profiles and Protein-Protein Interaction Network
 #'
-#' This function offering a comprehensive framework for identifying and prioritizing disease-related genes.
+#' This function offers a comprehensive framework for identifying and prioritizing disease-related genes.
 #'
 #' @param data A list of 2 elements:
 #'   \itemize{
 #'     \item \code{data} - A data frame of gene expression data with gene symbols as column names and the last column as class labels (Tumor, Normal).
 #'     \item \code{topGenes} - A data frame of DEGs with three columns: \code{Gene.symbol}, \code{adj.P.Val}, and \code{logFC}.
 #'   }
+#' @param regulation_status A string specifying the direction of regulation to filter genes. Acceptable values: "up", "down", or "both".
+#' @param species A string specifying the species. Acceptable values: "human" (9606), "mouse" (10090), or "rat" (10116).
 #' @return A data frame of key genes with their gene names, log fold change (logFC), and ensemble ranking.
 #' @examples
 #' \dontrun{
@@ -20,15 +22,15 @@
 #' @export
 
 
-DiCE_function <- function(data,regulation_status){
+DiCE_function <- function(data,regulation_status,species){
 
   library(dplyr)
   library(tibble)
   library(FSelectorRcpp)
   library(igraph)
   library(data.table)
-  library(afc)
-  # @The data must be a list of 2 elements. The first element is a data frame of gene expression data.
+  library(NetWeaver)
+  # The data must be a list of 2 elements. The first element is a data frame of gene expression data.
   # Column names are gene symbols, and the last column is the class label (Tumor, Normal).
   # The second list element is a list of DEGs named topGenes and is a data frame with three columns: Gene.symbol, adj.P.Val, and logFC.  data = data
   #===================================
@@ -99,26 +101,48 @@ DiCE_function <- function(data,regulation_status){
   m1=merge(x2,dee1,by="gene_name");m2=m1[order(m1$rank),];#View(m2)
   setdiff(x2$gene_name,m2$gene_name)
   #++++++++++++++++++++++PPInetwork
+  get_species_id <- function(species) {
+     species <- tolower(species)
+     if (species %in% c("human", "homo sapiens")) {
+        return(9606)
+    } else if (species %in% c("mouse", "mus musculus")) {
+       return(10090)
+    } else if (species %in% c("rat", "rattus norvegicus")) {
+       return(10116)
+    } else {
+       stop("Unsupported species. Please use 'human', 'mouse', or 'rat'.")
+    }
+   }
+  
   library(STRINGdb)
-  string_db <- STRINGdb$new(version="11", species=9606,score_threshold=400, input_directory="");#protocol="http"
+  string_db <- STRINGdb$new(version="11", species=get_species_id(species),score_threshold=400, input_directory="");#protocol="http"
   p=m2[,-c(2,3)];p=as.data.frame(p)
   p_mapped <- string_db$map(p, "gene_name", takeFirst=TRUE, removeUnmappedRows=TRUE, quiet=FALSE)
   neighbors <- string_db$get_neighbors(p_mapped$STRING_id);str(neighbors)
   inter<-string_db$get_interactions(p_mapped$STRING_id);str(inter)
 
   #+++++++++++++++++++++Expression matrix based on STRING name
-  d_matt=d_mat11[,colnames(d_mat11)%in%m2$gene_name]
-  table(duplicated(p_mapped$gene_name));p_mapped1 <- p_mapped[!duplicated(p_mapped$gene_name), ]  # remove duplicates
-  setdiff(colnames(d_matt),p_mapped$gene_name)
+  table(duplicated(p_mapped$gene_name));print(p_mapped[duplicated(p_mapped$gene_name),])
+  dup_genes <- p_mapped$gene_name[duplicated(p_mapped$gene_name) | duplicated(p_mapped$gene_name, fromLast = TRUE)]
+  p_mapped_unique <- p_mapped[!(p_mapped$gene_name %in% dup_genes), ]
+  nn<-inter;whol=nn[,-3];colnames(whol)=c("node1","node2");bl=whol
+  vertex=c(whol$node1,whol$node2);vertex=unique(vertex);length(vertex)
+  p_mapped_filtered <- p_mapped[p_mapped$gene_name %in% dup_genes & p_mapped$STRING_id %in% vertex, ]
+  p_mapped=rbind(p_mapped_unique,p_mapped_filtered)
+  p_mapped1 <- p_mapped[!duplicated(p_mapped$gene_name), ]  # remove duplicates
+
+  table(is.na(p_mapped1$STRING_id))
+
   convert_ORF <- function(x) {
-    parts <- strsplit(x, "ORF")[[1]]
-    paste0(parts[1], "orf", parts[2])
+      parts <- strsplit(x, "ORF")[[1]]
+      paste0(parts[1], "orf", parts[2])
   }
   p_mapped1$gene_name <- ifelse(substr(p_mapped1$gene_name, 1, 1) == "C" & (grepl("ORF", substr(p_mapped1$gene_name, 3, 5))|grepl("ORF", substr(p_mapped1$gene_name, 4, 6))),
-                                sapply(p_mapped1$gene_name, convert_ORF),
-                                p_mapped1$gene_name)
+                              sapply(p_mapped1$gene_name, convert_ORF),
+                              p_mapped1$gene_name)
 
-  s=d_matt[,colnames(d_matt)%in%p_mapped1$gene_name];dim(s)
+  setdiff(colnames(d_mat),p_mapped1$gene_name)
+  s=d_mat[,colnames(d_mat)%in%p_mapped1$gene_name];dim(s)
   s1=as.data.frame(s)
   setdiff(colnames(s1),p_mapped1$gene_name)
 
@@ -246,10 +270,10 @@ DiCE_function <- function(data,regulation_status){
   df.tmp22[is.na(df.tmp22)] <- 0
 
   enr=cbind(df.tmp22[,4],df.tmp22[,8])
-  ensembleRanking=rank.ensembles(enr)
+  ensembleRanking=ensemble_rank(enr,method='ProductOfRank')
   df.tmp22=cbind(df.tmp22,ensembleRanking);
   #sort based on ranking
-  df.tmp22=df.tmp22[order(df.tmp22[,9],decreasing = FALSE ),]
+  df.tmp22=df.tmp22[order(df.tmp22[,9],decreasing = TRUE ),]
   df.tmp22=(cbind(df.tmp22,rank));df.tmp22=as.data.frame(df.tmp22)
   pg=p_mapped1
   #gene.prioritized
