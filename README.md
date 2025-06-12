@@ -78,7 +78,7 @@ saveRDS(object = data,
 ## Run Differential Centrality-Ensemble Analysis
 library(DiCE)
 data <- readRDS("~/Ovarian_cancer.RDS");#Downloading and Reading an RDS File
-KeyGenes <- DiCE_function(data,regulation_status = "Up");
+KeyGenes <- DiCE_function(data,regulation_status = "Both",species="human");
 View(KeyGenes)
 
 ##Citation
