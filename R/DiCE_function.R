@@ -77,9 +77,8 @@ DiCE_function <- function(data,regulation_status,species){
   data$data=data$data[,colnames(data$data)%in%dee1$gene_name]
 
   rownames(data$data)<-NULL
-  d_mat11=data$data
-  d_mat1=d_mat11
-  d_mat1=scale(d_mat1) ;
+  d_mat=data$data
+  d_mat1=scale(d_mat) ;
   d_mat2=as.data.frame(d_mat1);
 
   newMydata=cbind(d_mat2,class)
