@@ -101,7 +101,7 @@ DiCE_function <- function(data,regulation_status,species){
   oo=ddds[,-1];oo1=oo[,c(2,1)]; plot(oo1)
 
   x2<- ddds[-which(ddds$weight<mean(ddds$weight,na.rm = TRUE)),];#View(x2);dim(x2);
-  m1=merge(x2,dee1,by="gene_name");m2=m1[order(m1$rank),];View(m2)
+  m1=merge(x2,dee1,by="gene_name");m2=m1[order(m1$rank),];#View(m2)
   setdiff(x2$gene_name,m2$gene_name)
   #++++++++++++++++++++++PPInetwork
   get_species_id <- function(species) {
