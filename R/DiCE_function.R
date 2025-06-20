@@ -30,6 +30,7 @@ DiCE_function <- function(data,regulation_status,species){
   library(igraph)
   library(data.table)
   library(NetWeaver)
+  ibrary(praznik)
   # The data must be a list of 2 elements. The first element is a data frame of gene expression data.
   # Column names are gene symbols, and the last column is the class label (Tumor, Normal).
   # The second list element is a list of DEGs named topGenes and is a data frame with three columns: Gene.symbol, adj.P.Val, and logFC.  data = data
@@ -78,26 +79,29 @@ DiCE_function <- function(data,regulation_status,species){
 
   rownames(data$data)<-NULL
   d_mat=data$data
-  d_mat1=scale(d_mat) ;
+  #d_mat1=scale(d_mat);
+  d_mat1=d_mat;
   d_mat2=as.data.frame(d_mat1);
 
   newMydata=cbind(d_mat2,class)
 
-  weights <- information_gain(class~., newMydata,type = "infogain");#View(weights);#c("infogain", "gainratio", "symuncert")
-
-
-  s=as.data.frame(weights$importance)
-  row.names(s)=weights$attributes
+  #weights <- information_gain(class~., newMydata,type = "infogain");#View(weights);#c("infogain", "gainratio", "symuncert")
+  #s=as.data.frame(weights$importance)
+  #row.names(s)=weights$attributes
+  #----------------------------------------Mutual information scores
+  weights <- miScores(d_mat2,class);weights=data.frame(weights);s=weights;
+  row.names(s)=row.names(weights)
+  
   vi <- s
   vi$max <- apply(vi, 1, max)
   VS=vi[order(-vi$max),]
   rn=rownames(VS);ddds=cbind(rn,VS,1:nrow(VS));ddds=ddds[,-3];
   colnames(ddds)=c("gene_name","weight","rank");#View(ddds)
   ddds1<- ddds[-which(ddds$weight==0),];#View(ddds1);
-  oo=ddds[,-1];oo1=oo[,c(2,1)]; #plot(oo1)
+  oo=ddds[,-1];oo1=oo[,c(2,1)]; plot(oo1)
 
   x2<- ddds[-which(ddds$weight<mean(ddds$weight,na.rm = TRUE)),];#View(x2);dim(x2);
-  m1=merge(x2,dee1,by="gene_name");m2=m1[order(m1$rank),];#View(m2)
+  m1=merge(x2,dee1,by="gene_name");m2=m1[order(m1$rank),];View(m2)
   setdiff(x2$gene_name,m2$gene_name)
   #++++++++++++++++++++++PPInetwork
   get_species_id <- function(species) {
@@ -150,7 +154,7 @@ DiCE_function <- function(data,regulation_status,species){
   expression1=cbind(s1,class);dim(expression1)
   table(duplicated(colnames(expression1)))
 
-  #++++++++++++++++++++Phase III: Modification of PPIs network by calculating Pearson correlation coefficients (c.c.) of paired genes in terms of gene expression for a specific phonotype or under one condition and assigning (1−|𝑐.𝑐.|) as the normalized distance between paired genes in accordance with the PPI network.
+  #++++++++++++++++++++Phase III: Modification of PPIs network by calculating Pearson correlation coefficients (c.c.) of paired genes in terms of gene expression for a specific phenotype or under one condition and assigning (1−|𝑐.𝑐|) as the normalized distance between paired genes by the PPI network.
 
   nn<-inter;whol=nn[,-3];colnames(whol)=c("node1","node2");bl=whol
   vertex=c(whol$node1,whol$node2);vertex=unique(vertex);length(vertex)
@@ -158,9 +162,13 @@ DiCE_function <- function(data,regulation_status,species){
   test1=expression1[expression1$class=="Normal",];
   test1=test1[,-ncol(test1)];
   name=colnames(test1);
-  df=test1
-  mat1 <- abs(cor(df,method = "pearson"))
+  df=test1; 
+  cat("=== Expression Data (Preview) ===\n")
+  print(head(df));
+  print(dim(df))
 
+  #mat1 <- abs(cor(df,method = "pearson"))
+  mat1 <- abs(cor(df,method = "spearman"))
   com=intersect(vertex,colnames(test1));length(com);length(vertex);setdiff(vertex,com)
   #------------------------
   dif1=setdiff(vertex,com);
@@ -178,7 +186,7 @@ DiCE_function <- function(data,regulation_status,species){
 
   sss=aa[paste(aa$ind,aa$ind2)%in%concat,]
   sss=cbind(sss[3],sss[2],sss[1])
-  colnames(sss)=c("source","target","weight")
+  colnames(sss)=c("source", "target", "weight")
   g <- graph_from_data_frame(sss,directed = FALSE)
   is_weighted(g)
   g <- set_edge_attr(g, "weight", value=(1-(sss$weight))+0.001)
@@ -220,7 +228,7 @@ DiCE_function <- function(data,regulation_status,species){
 
   sss=aa[paste(aa$ind,aa$ind2)%in%concat,]
   sss=cbind(sss[3],sss[2],sss[1])
-  colnames(sss)=c("source","target","weight")
+  colnames(sss)=c("source", "target", "weight")
   g <- graph_from_data_frame(sss,directed = FALSE)
   is_weighted(g)
   g <- set_edge_attr(g, "weight", value=(1-(sss$weight))+0.001)
@@ -235,7 +243,7 @@ DiCE_function <- function(data,regulation_status,species){
   centralities.Tumor <-centralities
 
   #+++++++++++++++++++++++++++++++++++++++++Ensemble ranking
-  #Phase V: Ensemble ranking to produce a robust and trust level of rating based on the ranks established in the previous stage.
+  #Phase V: Ensemble ranking to produce a robust and trustworthy level of rating based on the ranks established in the previous stage.
 
   df.tmp <- cbind(centralities.Tumor,centralities.Normal);#View(df.tmp)
   #-----------------------------------------------
@@ -275,7 +283,7 @@ DiCE_function <- function(data,regulation_status,species){
   df.tmp22=df.tmp22[order(df.tmp22[,9],decreasing = TRUE ),]
   df.tmp22=(cbind(df.tmp22,rank));df.tmp22=as.data.frame(df.tmp22)
   pg=p_mapped1
-  #gene.prioritized
+  #gene. prioritized
   merged_df <- merge(pg, df.tmp22, by.x = "STRING_id", by.y = "row.names", all.y = TRUE)
   df2 <- merged_df[order(merged_df$rank.2,decreasing=FALSE),];#View(df2)
   #write.csv(df2, file = "gene.prioritized.csv")
@@ -292,7 +300,7 @@ DiCE_function <- function(data,regulation_status,species){
   common1
 
   lc=df2[df2$gene_name%in%common1,];dim(lc)
-  KeyGenes=0;KeyGenes=lc[,c(2,4,14)];colnames(KeyGenes)<-c("gene_name","logFC","ensemble.Ranking")
+  KeyGenes=0; KeyGenes=lc[,c(2,4,14)];colnames(KeyGenes)<-c("gene_name", "logFC", "ensemble.Ranking")
   #write.csv(lc, file = "KeyGenes.csv")
   View(KeyGenes)
   return(KeyGenes)
