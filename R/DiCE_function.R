@@ -163,9 +163,6 @@ DiCE_function <- function(data,regulation_status,species){
   test1=test1[,-ncol(test1)];
   name=colnames(test1);
   df=test1; 
-  cat("=== Expression Data (Preview) ===\n")
-  print(head(df));
-  print(dim(df))
 
   #mat1 <- abs(cor(df,method = "pearson"))
   mat1 <- abs(cor(df,method = "spearman"))
