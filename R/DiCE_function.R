@@ -30,7 +30,7 @@ DiCE_function <- function(data,regulation_status,species){
   library(igraph)
   library(data.table)
   library(NetWeaver)
-  ibrary(praznik)
+  library(praznik)
   # The data must be a list of 2 elements. The first element is a data frame of gene expression data.
   # Column names are gene symbols, and the last column is the class label (Tumor, Normal).
   # The second list element is a list of DEGs named topGenes and is a data frame with three columns: Gene.symbol, adj.P.Val, and logFC.  data = data
