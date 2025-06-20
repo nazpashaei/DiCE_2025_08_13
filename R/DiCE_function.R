@@ -206,8 +206,8 @@ DiCE_function <- function(data,regulation_status,species){
   test1=test1[,-ncol(test1)];
   name=colnames(test1);
   df=test1
-  mat1 <- abs(cor(df,method = "pearson"))
-
+  #mat1 <- abs(cor(df,method = "pearson"))
+  mat1 <- abs(cor(df,method = "spearman"))
   com=intersect(vertex,colnames(test1));length(com);length(vertex);setdiff(vertex,com)
   #------------------------
   dif1=setdiff(vertex,com);
