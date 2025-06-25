@@ -32,7 +32,7 @@ DiCE_function <- function(data,regulation_status,species){
   library(NetWeaver)
   library(praznik)
   # The data must be a list of 2 elements. The first element is a data frame of gene expression data.
-  # Column names are gene symbols, and the last column is the class label (Tumor, Normal).
+  # Column names are gene symbols; the last column is the class label (Tumor, Normal).
   # The second list element is a list of DEGs named topGenes and is a data frame with three columns: Gene.symbol, adj.P.Val, and logFC.  data = data
   #===================================
   str(data$topGenes)
@@ -56,8 +56,8 @@ DiCE_function <- function(data,regulation_status,species){
   colnames(data$data)<-sapply(colnames(data$data), process_gene_names)
   data$topGenes <- subset(data$topGenes, !grepl("LOC", data$topGenes$Gene.symbol))
   data$topGenes <- subset(data$topGenes, !grepl("LINC", data$topGenes$Gene.symbol))
-  data$topGenes$Gene.symbol<-toupper(data$topGenes$Gene.symbol)
-
+  #data$topGenes$Gene.symbol<-toupper(data$topGenes$Gene.symbol)
+    data$topGenes$Gene.symbol<-(data$topGenes$Gene.symbol)
 
 
   #Phase I: Construction of a candidate gene pool by DEA with a loose cutoff
@@ -74,7 +74,7 @@ DiCE_function <- function(data,regulation_status,species){
   #+++++++++++++++++++++++Phase II: Selection of the top discriminative genes from the candidate pool obtained in Phase I using the Information Gain (IG) filter approach.
 
   class=data$data[,ncol(data$data)]
-  colnames(data$data)<-toupper(colnames(data$data))
+  #colnames(data$data)<-toupper(colnames(data$data))
   data$data=data$data[,colnames(data$data)%in%dee1$gene_name]
 
   rownames(data$data)<-NULL
