@@ -118,18 +118,14 @@ DiCE_function <- function(data,regulation_status,species){
    }
   
   library(STRINGdb)
-  string_db <- STRINGdb$new(version="11", species=get_species_id(species),score_threshold=400, input_directory="");#protocol="http"
+  string_db <- STRINGdb$new(version="12", species=get_species_id(species),score_threshold=400, input_directory="");#protocol="http"
   p=m2[,-c(2,3)];p=as.data.frame(p)
   p_mapped <- string_db$map(p, "gene_name", takeFirst=TRUE, removeUnmappedRows=TRUE, quiet=FALSE)
   neighbors <- string_db$get_neighbors(p_mapped$STRING_id);str(neighbors)
   inter<-string_db$get_interactions(p_mapped$STRING_id);str(inter)
 
   #+++++++++++++++++++++Expression matrix based on STRING name
-  if(get_species_id(species)==10090){
-      p_mapped$gene_name <- paste0(toupper(substr(p_mapped$gene_name, 1, 1)),
-                             tolower(substr(p_mapped$gene_name, 2, nchar(p_mapped$gene_name))))
-   }
-  table(duplicated(p_mapped$gene_name));print(p_mapped[duplicated(p_mapped$gene_name),])
+   table(duplicated(p_mapped$gene_name));print(p_mapped[duplicated(p_mapped$gene_name),])
   dup_genes <- p_mapped$gene_name[duplicated(p_mapped$gene_name) | duplicated(p_mapped$gene_name, fromLast = TRUE)]
   p_mapped_unique <- p_mapped[!(p_mapped$gene_name %in% dup_genes), ]
   nn<-inter;whol=nn[,-3];colnames(whol)=c("node1","node2");bl=whol
