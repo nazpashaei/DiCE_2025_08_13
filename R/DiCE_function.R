@@ -57,7 +57,7 @@ DiCE_function <- function(data,regulation_status,species){
   data$topGenes <- subset(data$topGenes, !grepl("LOC", data$topGenes$Gene.symbol))
   data$topGenes <- subset(data$topGenes, !grepl("LINC", data$topGenes$Gene.symbol))
   #data$topGenes$Gene.symbol<-toupper(data$topGenes$Gene.symbol)
-    data$topGenes$Gene.symbol<-(data$topGenes$Gene.symbol)
+  data$topGenes$Gene.symbol<-(data$topGenes$Gene.symbol)
 
 
   #Phase I: Construction of a candidate gene pool by DEA with a loose cutoff
@@ -125,6 +125,10 @@ DiCE_function <- function(data,regulation_status,species){
   inter<-string_db$get_interactions(p_mapped$STRING_id);str(inter)
 
   #+++++++++++++++++++++Expression matrix based on STRING name
+  if(get_species_id(species)==10090){
+      p_mapped$gene_name <- paste0(toupper(substr(p_mapped$gene_name, 1, 1)),
+                             tolower(substr(p_mapped$gene_name, 2, nchar(p_mapped$gene_name))))
+   }
   table(duplicated(p_mapped$gene_name));print(p_mapped[duplicated(p_mapped$gene_name),])
   dup_genes <- p_mapped$gene_name[duplicated(p_mapped$gene_name) | duplicated(p_mapped$gene_name, fromLast = TRUE)]
   p_mapped_unique <- p_mapped[!(p_mapped$gene_name %in% dup_genes), ]
@@ -135,15 +139,15 @@ DiCE_function <- function(data,regulation_status,species){
   p_mapped1 <- p_mapped[!duplicated(p_mapped$gene_name), ]  # remove duplicates
 
   table(is.na(p_mapped1$STRING_id))
-
-  convert_ORF <- function(x) {
-      parts <- strsplit(x, "ORF")[[1]]
-      paste0(parts[1], "orf", parts[2])
-  }
-  p_mapped1$gene_name <- ifelse(substr(p_mapped1$gene_name, 1, 1) == "C" & (grepl("ORF", substr(p_mapped1$gene_name, 3, 5))|grepl("ORF", substr(p_mapped1$gene_name, 4, 6))),
+  if(get_species_id(species)==9606){
+        convert_ORF <- function(x) {
+         parts <- strsplit(x, "ORF")[[1]]
+         paste0(parts[1], "orf", parts[2])
+        }
+         p_mapped1$gene_name <- ifelse(substr(p_mapped1$gene_name, 1, 1) == "C" & (grepl("ORF", substr(p_mapped1$gene_name, 3, 5))|grepl("ORF", substr(p_mapped1$gene_name, 4, 6))),
                               sapply(p_mapped1$gene_name, convert_ORF),
                               p_mapped1$gene_name)
-
+  }
   setdiff(colnames(d_mat),p_mapped1$gene_name)
   s=d_mat[,colnames(d_mat)%in%p_mapped1$gene_name];dim(s)
   s1=as.data.frame(s)
