@@ -296,7 +296,8 @@ DiCE_function <- function(data,regulation_status,species){
   common1
 
   lc=df2[df2$gene_name%in%common1,];dim(lc)
-  DiCE.genes=0; DiCE.genes=lc[,c(2,4,14)];colnames(DiCE.genes)<-c("gene_name", "logFC", "ensemble.Ranking")
+  DiCE.genes=0; DiCE.genes=lc[,c(2,4,14)];colnames(DiCE.genes)<-c("gene_name", "logFC", "ensemble.Ranking");
+  DiCE.genes$ensemble.Ranking <- 1:nrow(DiCE.genes)
   cat("Phase I =", nrow(dee1), "\n",
     "Phase II =", nrow(m2), "\n",
     "Phase III =", nrow(df2), "\n",
