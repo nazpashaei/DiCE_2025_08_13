@@ -315,7 +315,7 @@ writeLines(c(
 ), file_conn)
 
 # Append the data
-write.table(lc, file = file_conn, sep = ",", row.names = FALSE, col.names = TRUE, append = TRUE)
+write.table(DiCE.genes, file = file_conn, sep = ",", row.names = FALSE, col.names = TRUE, append = TRUE)
 
 # Close the file connection
 close(file_conn)
