@@ -296,10 +296,30 @@ DiCE_function <- function(data,regulation_status,species){
   common1
 
   lc=df2[df2$gene_name%in%common1,];dim(lc)
-  KeyGenes=0; KeyGenes=lc[,c(2,4,14)];colnames(KeyGenes)<-c("gene_name", "logFC", "ensemble.Ranking")
-  #write.csv(lc, file = "KeyGenes.csv")
-  View(KeyGenes)
-  return(KeyGenes)
+  DiCE.genes=0; DiCE.genes=lc[,c(2,4,14)];colnames(DiCE.genes)<-c("gene_name", "logFC", "ensemble.Ranking")
+  cat("Phase I =", nrow(dee1), "\n",
+    "Phase II =", nrow(m2), "\n",
+    "Phase III =", nrow(df2), "\n",
+    "DiCe-genes =", length(common1), "\n")
+# Open a connection for writing
+file_conn <- file("DiCE.genes.csv", open = "wt")
+
+# Write the summary information first
+writeLines(c(
+    paste("Phase I =", nrow(dee1)),
+    paste("Phase II =", nrow(m2)),
+    paste("Phase III =", nrow(df2)),
+    paste("DiCe-genes =", length(common1)),
+    ""  # Blank line before the table
+), file_conn)
+
+# Append the data
+write.table(lc, file = file_conn, sep = ",", row.names = FALSE, col.names = TRUE, append = TRUE)
+
+# Close the file connection
+close(file_conn)
+  View(DiCE.genes)
+  return(DiCE.genes)
 }
 #------------------------------------------:) end
 
