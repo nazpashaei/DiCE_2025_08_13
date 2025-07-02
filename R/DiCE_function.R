@@ -85,12 +85,12 @@ DiCE_function <- function(data,regulation_status,species){
 
   newMydata=cbind(d_mat2,class)
 
-  #weights <- information_gain(class~., newMydata,type = "infogain");#View(weights);#c("infogain", "gainratio", "symuncert")
-  #s=as.data.frame(weights$importance)
-  #row.names(s)=weights$attributes
+  weights <- information_gain(class~., newMydata,type = "infogain");#View(weights);#c("infogain", "gainratio", "symuncert")
+  s=as.data.frame(weights$importance)
+  row.names(s)=weights$attributes
   #----------------------------------------Mutual information scores
-  weights <- miScores(d_mat2,class);weights=data.frame(weights);s=weights;
-  row.names(s)=row.names(weights)
+  #weights <- miScores(d_mat2,class);weights=data.frame(weights);s=weights;
+  #row.names(s)=row.names(weights)
   
   vi <- s
   vi$max <- apply(vi, 1, max)
@@ -118,7 +118,7 @@ DiCE_function <- function(data,regulation_status,species){
    }
   
   library(STRINGdb)
-  string_db <- STRINGdb$new(version="12", species=get_species_id(species),score_threshold=400, input_directory="");#protocol="http"
+  string_db <- STRINGdb$new(version="11", species=get_species_id(species),score_threshold=400, input_directory="");#protocol="http"
   p=m2[,-c(2,3)];p=as.data.frame(p)
   p_mapped <- string_db$map(p, "gene_name", takeFirst=TRUE, removeUnmappedRows=TRUE, quiet=FALSE)
   neighbors <- string_db$get_neighbors(p_mapped$STRING_id);str(neighbors)
