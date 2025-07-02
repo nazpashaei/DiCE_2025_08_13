@@ -118,7 +118,7 @@ DiCE_function <- function(data,regulation_status,species){
    }
   
   library(STRINGdb)
-  string_db <- STRINGdb$new(version="11", species=get_species_id(species),score_threshold=400, input_directory="");#protocol="http"
+  string_db <- STRINGdb$new(version="12", species=get_species_id(species),score_threshold=400, input_directory="");#protocol="http"
   p=m2[,-c(2,3)];p=as.data.frame(p)
   p_mapped <- string_db$map(p, "gene_name", takeFirst=TRUE, removeUnmappedRows=TRUE, quiet=FALSE)
   neighbors <- string_db$get_neighbors(p_mapped$STRING_id);str(neighbors)
