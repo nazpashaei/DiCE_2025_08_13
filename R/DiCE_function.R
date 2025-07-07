@@ -291,20 +291,20 @@ DiCE_function <- function(data,regulation_status,species,method){
   x<-df2
   # Compute thresholds based on the chosen method
   if (method == "mean") {
-    B <- mean(df$Betweenness)
-    B1 <- mean(df$Betweenness.1)
-    E <- mean(df$Eig)
-    E1 <- mean(df$Eig.1)
+    B <- mean(df2$Betweenness)
+    B1 <- mean(df2$Betweenness.1)
+    E <- mean(df2$Eig)
+    E1 <- mean(df2$Eig.1)
   } else if (method == "top25") {
-    B <- quantile(df$Betweenness, 0.75)
-    B1 <- quantile(df$Betweenness.1, 0.75)
-    E <- quantile(df$Eig, 0.75)
-    E1 <- quantile(df$Eig.1, 0.75)
+    B <- quantile(df2$Betweenness, 0.75)
+    B1 <- quantile(df2$Betweenness.1, 0.75)
+    E <- quantile(df2$Eig, 0.75)
+    E1 <- quantile(df2$Eig.1, 0.75)
   } else if (method == "median") {
-    B <- median(df$Betweenness)
-    B1 <- median(df$Betweenness.1)
-    E <- median(df$Eig)
-    E1 <- median(df$Eig.1)
+    B <- median(df2$Betweenness)
+    B1 <- median(df2$Betweenness.1)
+    E <- median(df2$Eig)
+    E1 <- median(df2$Eig.1)
   } else {
     stop("Method must be one of: 'mean', 'top25', or 'median'")
   }
