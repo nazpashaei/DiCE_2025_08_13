@@ -329,7 +329,7 @@ writeLines(c(
     paste("Phase I =", nrow(dee1)),
     paste("Phase II =", nrow(m2)),
     paste("Phase III =", nrow(df2)),
-    paste("DiCe-genes =", length(common1)),
+    paste("DiCE-genes =", length(common1)),
     ""  # Blank line before the table
 ), file_conn)
 
