@@ -358,7 +358,7 @@ dee1_merged <- merge(dee1_merged, DiCE.genes[, c("gene_name", "Final.rank")],
 dee1_merged[is.na(dee1_merged)] <- "-"
 
 
-colnames(dee1_merged)<-c("Offical gene symbol from input file", "log2FC", "p-value", "FDR","DB","DE","Ensemble.rank","DiCE Phase","Final.rank");
+colnames(dee1_merged)<-c("Offical gene symbol from input file", "p-value","log2FC","DB","DE","Ensemble.rank","DiCE Phase","Final.rank");
 
 # Append the data
 write.table(dee1_merged, file = file_conn, sep = ",", row.names = FALSE, col.names = TRUE, append = TRUE)
