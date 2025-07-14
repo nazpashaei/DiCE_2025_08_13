@@ -316,13 +316,13 @@ DiCE_function <- function(data,regulation_status,species,method){
 
   lc=df2[df2$gene_name%in%common1,];dim(lc)
   DiCE.genes=0; DiCE.genes=lc[,c(2,4,14)];colnames(DiCE.genes)<-c("gene_name", "logFC", "ensemble.Ranking");
-  DiCE.genes$ensemble.Ranking <- 1:nrow(DiCE.genes)
-  cat("Phase I =", nrow(dee1), "\n",
+  DiCE.genes$Final.rank <- 1:nrow(DiCE.genes)
+cat("Phase I =", nrow(dee1), "\n",
     "Phase II =", nrow(m2), "\n",
     "Phase III =", nrow(df2), "\n",
     "DiCe-genes =", length(common1), "\n")
 # Open a connection for writing
-file_conn <- file("DiCE.genes.csv", open = "wt")
+file_conn <- file("DiCE.output.csv", open = "wt")
 
 # Write the summary information first
 writeLines(c(
@@ -333,11 +333,39 @@ writeLines(c(
     ""  # Blank line before the table
 ), file_conn)
 
+# Merge df2 columns (result, result.1, rank.2) into dee1 by gene_name
+dee1_merged <- merge(dee1, df2[, c("gene_name", "result", "result.1", "rank.2")], 
+                     by = "gene_name", all.x = TRUE)
+
+
+
+# Create a new column indicating presence in each phase
+dee1_merged$Phase <- apply(dee1_merged, 1, function(row) {
+  phases <- c()
+  if (row["gene_name"] %in% dee$gene_name) phases <- c(phases, "I")
+  if (row["gene_name"] %in% m2$gene_name) phases <- c(phases, "II")
+  if (row["gene_name"] %in% df2$gene_name) phases <- c(phases, "III")
+  if (row["gene_name"] %in% DiCE.genes$gene_name) phases <- c(phases, "DiCE")
+  
+  if (length(phases) == 0) return("-")
+  return(tail(phases, 1))  # return only the last (most recent) matched phase
+})
+
+# Merge DiCE.genes column (Final.rank) into the merged data
+dee1_merged <- merge(dee1_merged, DiCE.genes[, c("gene_name", "Final.rank")], 
+                     by = "gene_name", all.x = TRUE)
+
+dee1_merged[is.na(dee1_merged)] <- "-"
+
+
+colnames(dee1_merged)<-c("Offical gene symbol from input file", "log2FC", "p-value", "FDR","DB","DE","Ensemble.rank","DiCE Phase","Final.rank");
+
 # Append the data
-write.table(DiCE.genes, file = file_conn, sep = ",", row.names = FALSE, col.names = TRUE, append = TRUE)
+write.table(dee1_merged, file = file_conn, sep = ",", row.names = FALSE, col.names = TRUE, append = TRUE)
 
 # Close the file connection
 close(file_conn)
+#------------------------------------------:) end 
   View(DiCE.genes)
   return(DiCE.genes)
 }
