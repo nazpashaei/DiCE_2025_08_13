@@ -5,7 +5,7 @@
 #' @param data A list of 2 elements:
 #'   \itemize{
 #'     \item \code{data} - A data frame of gene expression data with gene symbols as column names and the last column as class labels (Tumor, Normal).
-#'     \item \code{topGenes} - A data frame of DEGs with three columns: \code{Gene.symbol}, \code{adj.P.Val}, and \code{logFC}.
+#'     \item \code{DE} - A data frame of DEGs with three columns: \code{Gene.symbol}, \code{adj.P.Val}, and \code{logFC}.
 #'   }
 #' @param regulation_status A string specifying the direction of regulation to filter genes. Acceptable values: "up", "down", or "both".
 #' @param species A string specifying the species. Acceptable values: "human" (9606), "mouse" (10090), or "rat" (10116).
@@ -15,7 +15,7 @@
 #'   # Example data
 #'   data <- list(
 #'     data = data.frame(gene1 = c(1, 2), gene2 = c(3, 4), class = c("Tumor", "Normal")),
-#'     topGenes = data.frame(Gene.symbol = c("gene1", "gene2"), adj.P.Val = c(0.01, 0.02), logFC = c(2, -2))
+#'     DE = data.frame(Gene.symbol = c("gene1", "gene2"), adj.P.Val = c(0.01, 0.02), logFC = c(2, -2))
 #'   )
 #'   KeyGenes <- DiCE_function(data)
 #' }
@@ -33,9 +33,9 @@ DiCE_function <- function(data,regulation_status,species,method){
   library(praznik)
   # The data must be a list of 2 elements. The first element is a data frame of gene expression data.
   # Column names are gene symbols; the last column is the class label (Tumor, Normal).
-  # The second list element is a list of DEGs named topGenes and is a data frame with three columns: Gene.symbol, adj.P.Val, and logFC.  data = data
+  # The second list element is a list of DEGs named DE and is a data frame with three columns: Gene.symbol, adj.P.Val, and logFC.  data = data
   #===================================
-  str(data$topGenes)
+  str(data$DE)
   process_gene_names <- function(Gene.symbol) {
     # Count the occurrences of '///' in the gene name
     slashes_count <- length(gregexpr("///", Gene.symbol)[[1]])
@@ -52,21 +52,21 @@ DiCE_function <- function(data,regulation_status,species,method){
 
   # Apply the function to each gene name
   #pseudogenes and lncRNA's
-  data$topGenes$Gene.symbol <- sapply(data$topGenes$Gene.symbol, process_gene_names)
+  data$DE$Gene.symbol <- sapply(data$DE$Gene.symbol, process_gene_names)
   colnames(data$data)<-sapply(colnames(data$data), process_gene_names)
-  data$topGenes <- subset(data$topGenes, !grepl("LOC", data$topGenes$Gene.symbol))
-  data$topGenes <- subset(data$topGenes, !grepl("LINC", data$topGenes$Gene.symbol))
-  #data$topGenes$Gene.symbol<-toupper(data$topGenes$Gene.symbol)
-  data$topGenes$Gene.symbol<-(data$topGenes$Gene.symbol)
+  data$DE <- subset(data$DE, !grepl("LOC", data$DE$Gene.symbol))
+  data$DE <- subset(data$DE, !grepl("LINC", data$DE$Gene.symbol))
+  #data$DE$Gene.symbol<-toupper(data$DE$Gene.symbol)
+  data$DE$Gene.symbol<-(data$DE$Gene.symbol)
 
 
   #Phase I: Construction of a candidate gene pool by DEA with a loose cutoff
   #=======================================
  if(regulation_status=="Up"){
-    dee=(data$topGenes[(data$topGenes$adj.P.Val<=0.05)&(data$topGenes$logFC>0),])
+    dee=(data$DE[(data$DE$adj.P.Val<=0.05)&(data$DE$logFC>0),])
   }else if(regulation_status=="Down"){
-    dee=(data$topGenes[(data$topGenes$adj.P.Val<=0.05)&(data$topGenes$logFC<0),])
-  }else{dee=(data$topGenes[(data$topGenes$adj.P.Val<=0.05),])}
+    dee=(data$DE[(data$DE$adj.P.Val<=0.05)&(data$DE$logFC<0),])
+  }else{dee=(data$DE[(data$DE$adj.P.Val<=0.05),])}
    
   dee1=dee
   colnames(dee1)=c("gene_name","P.Value","logFC")
@@ -342,7 +342,7 @@ dee1_merged <- merge(dee1, df2[, c("gene_name", "result", "result.1", "rank.2")]
 # Create a new column indicating presence in each phase
 dee1_merged$Phase <- apply(dee1_merged, 1, function(row) {
   phases <- c()
-  if (row["gene_name"] %in% dee$gene_name) phases <- c(phases, "I")
+  if (row["gene_name"] %in% dee1$gene_name) phases <- c(phases, "I")
   if (row["gene_name"] %in% m2$gene_name) phases <- c(phases, "II")
   if (row["gene_name"] %in% df2$gene_name) phases <- c(phases, "III")
   if (row["gene_name"] %in% DiCE.genes$gene_name) phases <- c(phases, "DiCE")
