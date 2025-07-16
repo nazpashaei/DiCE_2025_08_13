@@ -94,9 +94,9 @@ saveRDS(object = data,
 
 ## Run Differential Centrality-Ensemble Analysis
 library(DiCE)
-data <- readRDS("~/Ovarian_cancer.RDS");#Downloading and Reading an RDS File
-KeyGenes <- DiCE_function(data,regulation_status = "Both",species="human",method = "mean", pval_threshold = 0.05,
-log2fc_threshold = 1,pval_type = "adj.P.Val", control_label = "Normal");
+data <- readRDS("~/input_data_COAD.RDS");#Downloading and Reading an RDS File
+KeyGenes <- DiCE_function(data,regulation_status = "Both",species="human",method = "mean",
+pval_threshold = 0.05,log2fc_threshold = 1,pval_type = "adj.P.Val",case_label = "Tumor",control_label = "Normal");
 
 View(KeyGenes)
 
