@@ -50,7 +50,7 @@ data <- list(
     gene2 = c(2.107, 2.057),
     class = c("Tumor", "Normal")
   ),
-  topGenes = data.frame(
+  DE = data.frame(
     Gene.symbol = c("gene1", "gene2"),
     P.Value = c(0.01, 0.02),
     adj.P.Val = c(0.01, 0.02),
