@@ -22,7 +22,7 @@
 #' @export
 
 
-DiCE_function <- function(data,regulation_status,species,method,pval_threshold, log2fc_threshold,pval_type){
+DiCE_function <- function(data,regulation_status,species,method,pval_threshold, log2fc_threshold,pval_type,case_label, control_label){
 
   library(dplyr)
   library(tibble)
@@ -81,6 +81,9 @@ if (regulation_status == "Up") {
   #+++++++++++++++++++++++Phase II: Selection of the top discriminative genes from the candidate pool obtained in Phase I using the Information Gain (IG) filter approach.
 
   class=data$data[,ncol(data$data)]
+  if (!all(c(case_label, control_label) %in% class)) {
+  stop("Class labels provided not found in data")
+}
   #colnames(data$data)<-toupper(colnames(data$data))
   data$data=data$data[,colnames(data$data)%in%dee1$gene_name]
 
@@ -165,7 +168,7 @@ if (regulation_status == "Up") {
   nn<-inter;whol=nn[,-3];colnames(whol)=c("node1","node2");bl=whol
   vertex=c(whol$node1,whol$node2);vertex=unique(vertex);length(vertex)
 
-  test1=expression1[expression1$class=="Normal",];
+  test1=expression1[expression1$class=="control_label",];
   test1=test1[,-ncol(test1)];
   name=colnames(test1);
   df=test1; 
@@ -208,7 +211,7 @@ if (regulation_status == "Up") {
   nn<-inter;whol=nn[,-3];colnames(whol)=c("node1","node2");bl=whol
   vertex=c(whol$node1,whol$node2);vertex=unique(vertex);length(vertex)
 
-  test1=expression1[expression1$class=="Tumor",];
+  test1=expression1[expression1$class=="case_label",];
   test1=test1[,-ncol(test1)];
   name=colnames(test1);
   df=test1
