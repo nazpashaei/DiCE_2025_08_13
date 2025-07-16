@@ -22,7 +22,7 @@
 #' @export
 
 
-DiCE_function <- function(data,regulation_status,species,method){
+DiCE_function <- function(data,regulation_status,species,method,pval_threshold, log2fc_threshold){
 
   library(dplyr)
   library(tibble)
@@ -62,11 +62,13 @@ DiCE_function <- function(data,regulation_status,species,method){
 
   #Phase I: Construction of a candidate gene pool by DEA with a loose cutoff
   #=======================================
- if(regulation_status=="Up"){
-    dee=(data$DE[(data$DE$adj.P.Val<=0.05)&(data$DE$logFC>0),])
-  }else if(regulation_status=="Down"){
-    dee=(data$DE[(data$DE$adj.P.Val<=0.05)&(data$DE$logFC<0),])
-  }else{dee=(data$DE[(data$DE$adj.P.Val<=0.05),])}
+ if (regulation_status == "Up") {
+  dee = data$DE[(data$DE$adj.P.Val <= pval_threshold) & (data$DE$logFC >= log2fc_threshold), ]
+} else if (regulation_status == "Down") {
+  dee = data$DE[(data$DE$adj.P.Val <= pval_threshold) & (data$DE$logFC <= -log2fc_threshold), ]
+} else {
+  dee = data$DE[(data$DE$adj.P.Val <= pval_threshold) & (abs(data$DE$logFC) >= log2fc_threshold), ]
+}
    
   dee1=dee
   colnames(dee1)=c("gene_name","P.Value","logFC")
