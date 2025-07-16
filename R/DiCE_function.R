@@ -46,8 +46,8 @@ DiCE_function <- function(data,regulation_status,species,method,pval_threshold, 
   library(NetWeaver)
   library(praznik)
   # The data must be a list of 2 elements. The first element is a data frame of gene expression data.
-  # Column names are gene symbols; the last column is the class label (Tumor, Normal).
-  # The second list element is a list of DEGs named DE and is a data frame with three columns: Gene.symbol, adj.P.Val, and logFC.  data = data
+  # Column names are gene symbols; the last column is the class label.
+  # The second list element is a list of DEGs named DE and is a data frame with four columns: Gene.symbol,P.Value, adj.P.Val, and logFC.  data = data
   #===================================
   str(data$DE)
   process_gene_names <- function(Gene.symbol) {
@@ -182,7 +182,7 @@ if (regulation_status == "Up") {
   nn<-inter;whol=nn[,-3];colnames(whol)=c("node1","node2");bl=whol
   vertex=c(whol$node1,whol$node2);vertex=unique(vertex);length(vertex)
 
-  test1=expression1[expression1$class=="control_label",];
+  test1=expression1[expression1$class==control_label,];
   test1=test1[,-ncol(test1)];
   name=colnames(test1);
   df=test1; 
@@ -224,7 +224,7 @@ if (regulation_status == "Up") {
   nn<-inter;whol=nn[,-3];colnames(whol)=c("node1","node2");bl=whol
   vertex=c(whol$node1,whol$node2);vertex=unique(vertex);length(vertex)
 
-  test1=expression1[expression1$class=="case_label",];
+  test1=expression1[expression1$class==case_label,];
   test1=test1[,-ncol(test1)];
   name=colnames(test1);
   df=test1
