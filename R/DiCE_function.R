@@ -4,22 +4,36 @@
 #'
 #' @param data A list of 2 elements:
 #'   \itemize{
-#'     \item \code{data} - A data frame of gene expression data with gene symbols as column names and the last column as class labels (Tumor, Normal).
-#'     \item \code{DE} - A data frame of DEGs with three columns: \code{Gene.symbol}, \code{adj.P.Val}, and \code{logFC}.
+#'     \item \code{data} - A data frame of gene expression data with gene symbols as column names and the last column as class labels (e.g., Tumor, Normal). The class labels can be customized using the \code{case_label} and \code{control_label} parameters.
+#'     \item \code{DE} - A data frame of differentially expressed genes (DEGs) with four columns: \code{Gene.symbol}, \code{P.Value}, \code{adj.P.Val}, and \code{logFC}.
 #'   }
-#' @param regulation_status A string specifying the direction of regulation to filter genes. Acceptable values: "up", "down", or "both".
-#' @param species A string specifying the species. Acceptable values: "human" (9606), "mouse" (10090), or "rat" (10116).
+#' @param regulation_status A string specifying the direction of regulation to filter genes. Acceptable values: \code{"Up"}, \code{"Down"}, or \code{"Both"}.
+#' @param species A string specifying the species. Acceptable values: \code{"human"} (9606), \code{"mouse"} (10090), or \code{"rat"} (10116).
+#' @param method A string specifying the ranking method to identify key genes. Acceptable values: \code{"mean"}, \code{"top25"}, or \code{"median"}.
+#' @param pval_threshold Numeric threshold for filtering genes based on p-value or adjusted p-value.
+#' @param log2fc_threshold Numeric threshold for filtering genes based on log2 fold change.
+#' @param pval_type String indicating whether to use \code{"adj.P.Val"} or \code{"P.Value"} for filtering DEGs.
+#' @param case_label A string specifying the class label to be used as the case group (e.g., \code{"Tumor"}).
+#' @param control_label A string specifying the class label to be used as the control group (e.g., \code{"Normal"}).
 #' @return A data frame of key genes with their gene names, log fold change (logFC), and ensemble ranking.
 #' @examples
 #' \dontrun{
-#'   # Example data
+#'   # Example data with flexible class labels "Cancer" and "Healthy"
 #'   data <- list(
-#'     data = data.frame(gene1 = c(1, 2), gene2 = c(3, 4), class = c("Tumor", "Normal")),
-#'     DE = data.frame(Gene.symbol = c("gene1", "gene2"), adj.P.Val = c(0.01, 0.02), logFC = c(2, -2))
+#'     data = data.frame(gene1 = c(1, 2), gene2 = c(3, 4), class = c("Cancer", "Healthy")),
+#'     DE = data.frame(Gene.symbol = c("gene1", "gene2"), P.Value = c(0.02, 0.03), adj.P.Val = c(0.01, 0.02), logFC = c(2, -2))
 #'   )
-#'   KeyGenes <- DiCE_function(data)
+#'   DiCE.Genes <- DiCE_function(data,
+#'                             regulation_status = "Up",
+#'                             species = "human",
+#'                             method = "mean",
+#'                             pval_threshold = 0.05,
+#'                             log2fc_threshold = 1,
+#'                             pval_type = "adj.P.Val",
+#'                             case_label = "Cancer",
+#'                             control_label = "Healthy")
 #' }
-#' @export
+#' @exportt
 
 
 DiCE_function <- function(data,regulation_status,species,method,pval_threshold, log2fc_threshold,pval_type,case_label, control_label){
@@ -173,8 +187,7 @@ if (regulation_status == "Up") {
   name=colnames(test1);
   df=test1; 
 
-  #mat1 <- abs(cor(df,method = "pearson"))
-  mat1 <- abs(cor(df,method = "spearman"))
+  mat1 <- abs(cor(df,method = "pearson"))
   com=intersect(vertex,colnames(test1));length(com);length(vertex);setdiff(vertex,com)
   #------------------------
   dif1=setdiff(vertex,com);
@@ -215,8 +228,7 @@ if (regulation_status == "Up") {
   test1=test1[,-ncol(test1)];
   name=colnames(test1);
   df=test1
-  #mat1 <- abs(cor(df,method = "pearson"))
-  mat1 <- abs(cor(df,method = "spearman"))
+  mat1 <- abs(cor(df,method = "pearson"))
   com=intersect(vertex,colnames(test1));length(com);length(vertex);setdiff(vertex,com)
   #------------------------
   dif1=setdiff(vertex,com);
