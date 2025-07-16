@@ -337,7 +337,7 @@ if (regulation_status == "Up") {
   common1
 
   lc=df2[df2$gene_name%in%common1,];dim(lc)
-  DiCE.genes=0; DiCE.genes=lc[,c(2,4,14)];colnames(DiCE.genes)<-c("gene_name", "logFC", "ensemble.Ranking");
+  DiCE.genes=0; DiCE.genes=lc[,c(2,5,14)];colnames(DiCE.genes)<-c("gene_name", "logFC", "ensemble.Ranking");
   DiCE.genes$Final.rank <- 1:nrow(DiCE.genes)
 cat("Phase I =", nrow(dee1), "\n",
     "Phase II =", nrow(m2), "\n",
@@ -355,8 +355,9 @@ writeLines(c(
     ""  # Blank line before the table
 ), file_conn)
 
+  colnames(data$DE)[colnames(data$DE) == "Gene.symbol"] <- "gene_name"
 # Merge df2 columns (result, result.1, rank.2) into dee1 by gene_name
-dee1_merged <- merge(dee1, df2[, c("gene_name", "result", "result.1", "rank.2")], 
+dee1_merged <- merge(data$DE, df2[, c("gene_name", "result", "result.1", "rank.2")], 
                      by = "gene_name", all.x = TRUE)
 
 
