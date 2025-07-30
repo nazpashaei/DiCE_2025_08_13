@@ -21,7 +21,7 @@
 #'   # Example data with flexible class labels "Cancer" and "Healthy"
 #'   data <- list(
 #'     data = data.frame(gene1 = c(1, 2), gene2 = c(3, 4), class = c("Cancer", "Healthy")),
-#'     DE = data.frame(Gene.symbol = c("gene1", "gene2"), P.Value = c(0.02, 0.03), adj.P.Val = c(0.01, 0.02), logFC = c(2, -2))
+#'     DE = data.frame(Gene.symbol = c("gene1", "gene2"), logFC = c(2, -2), P.Value = c(0.02, 0.03), adj.P.Val = c(0.01, 0.02))
 #'   )
 #'   DiCE.Genes <- DiCE_function(data,
 #'                             regulation_status = "Up",
@@ -90,7 +90,7 @@ if (regulation_status == "Up") {
 }
    
   dee1=dee
-  colnames(dee1)=c("gene_name","P.Value","adj.P.Val","logFC")
+  colnames(dee1)=c("gene_name","logFC","P.Value","adj.P.Val",)
 
   #+++++++++++++++++++++++Phase II: Selection of the top discriminative genes from the candidate pool obtained in Phase I using the Information Gain (IG) filter approach.
 
@@ -142,7 +142,7 @@ if (regulation_status == "Up") {
    }
   
   library(STRINGdb)
-  string_db <- STRINGdb$new(version="12", species=get_species_id(species),score_threshold=400, input_directory="");#protocol="http"
+  string_db <- STRINGdb$new(version="11", species=get_species_id(species),score_threshold=400, input_directory="");#protocol="http"
   p=m2[,-c(2,3)];p=as.data.frame(p)
   p_mapped <- string_db$map(p, "gene_name", takeFirst=TRUE, removeUnmappedRows=TRUE, quiet=FALSE)
   neighbors <- string_db$get_neighbors(p_mapped$STRING_id);str(neighbors)
@@ -358,7 +358,7 @@ writeLines(c(
 
   colnames(data$DE)[colnames(data$DE) == "Gene.symbol"] <- "gene_name"
 # Merge df2 columns (result, result.1, rank.2) into dee1 by gene_name
-dee1_merged <- merge(data$DE, df2[, c("gene_name", "result", "result.1", "rank.2")], 
+dee1_merged <- merge(data$DE, df2[, "gene_name","Betweenness","Betweenness.1","result","Eig","Eig.1","result.1","rank.2")], 
                      by = "gene_name", all.x = TRUE)
 
 
@@ -366,10 +366,10 @@ dee1_merged <- merge(data$DE, df2[, c("gene_name", "result", "result.1", "rank.2
 # Create a new column indicating presence in each phase
 dee1_merged$Phase <- apply(dee1_merged, 1, function(row) {
   phases <- c()
-  if (row["gene_name"] %in% dee1$gene_name) phases <- c(phases, "I")
-  if (row["gene_name"] %in% m2$gene_name) phases <- c(phases, "II")
-  if (row["gene_name"] %in% df2$gene_name) phases <- c(phases, "III")
-  if (row["gene_name"] %in% DiCE.genes$gene_name) phases <- c(phases, "DiCE")
+  if (row["gene_name"] %in% dee1$gene_name) phases <- c( "I")
+  if (row["gene_name"] %in% m2$gene_name) phases <- c("II")
+  if (row["gene_name"] %in% df2$gene_name) phases <- c("III")
+  if (row["gene_name"] %in% DiCE.genes$gene_name) phases <- c("DiCE")
   
   if (length(phases) == 0) return("-")
   return(tail(phases, 1))  # return only the last (most recent) matched phase
@@ -382,7 +382,7 @@ dee1_merged <- merge(dee1_merged, DiCE.genes[, c("gene_name", "Final.rank")],
 dee1_merged[is.na(dee1_merged)] <- "-"
 
 
-colnames(dee1_merged)<-c("Offical gene symbol from input file", "p-value","adj.P.Val","log2FC","DB","DE","Ensemble.rank","DiCE Phase","Final.rank");
+colnames(dee1_merged)<-c("Offical gene symbol from input file", "log2FC", "p-value","adj.P.Val","Betweenness.case","Betweenness.Control","DB","Eig.case","Eig.Control","DE","Ensemble.rank","last phase in DiCE","Final.rank");
 
 # Append the data
 write.table(dee1_merged, file = file_conn, sep = ",", row.names = FALSE, col.names = TRUE, append = TRUE)
