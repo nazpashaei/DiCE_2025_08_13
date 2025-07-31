@@ -45,6 +45,8 @@ DiCE_function <- function(data,regulation_status,species,method,pval_threshold, 
   library(data.table)
   library(NetWeaver)
   library(praznik)
+  library(openxlsx)
+
   # The data must be a list of 2 elements. The first element is a data frame of gene expression data.
   # Column names are gene symbols; the last column is the class label.
   # The second list element is a list of DEGs named DE and is a data frame with four columns: Gene.symbol,P.Value, adj.P.Val, and logFC.  data = data
