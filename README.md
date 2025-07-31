@@ -21,7 +21,7 @@ It performs the following steps:
 
 Step 1: Install Required Dependencies
 First, ensure that all necessary packages are installed:
-install.packages(c("devtools", "dplyr", "tibble", "FSelectorRcpp", "igraph", "data.table", "NetWeaver"))
+install.packages(c("devtools", "dplyr", "tibble", "FSelectorRcpp", "igraph", "data.table", "NetWeaver","openxlsx"))
 
 Step 2: Install Bioconductor Package
 Ensure you have the BiocManager package installed, then use it to install the STRINGdb package from Bioconductor:
@@ -41,7 +41,7 @@ This section provides an example of how to prepare and save the data required fo
 ### Data Structure
 - `data`: A list of two data frames:
   1. `data`: Gene expression data with class labels. The last column should be the class label ("Tumor" and "Normal").
-  2. `DE`: Information about differentially expressed genes (DEGs), including gene symbols, p-values, adjusted p-values, and log fold changes.
+  2. `DE`: Information about differentially expressed genes (DEGs), including gene symbols, log fold changes, p-values, and adjusted p-values.
 
 
 data <- list(
@@ -52,9 +52,9 @@ data <- list(
   ),
   DE = data.frame(
     Gene.symbol = c("gene1", "gene2"),
+    logFC = c(2, -2),
     P.Value = c(0.01, 0.02),
-    adj.P.Val = c(0.01, 0.02),
-    logFC = c(2, -2)
+    adj.P.Val = c(0.01, 0.02)
   )
 )
 saveRDS(object = data,
@@ -64,7 +64,7 @@ saveRDS(object = data,
 #########Parameters
 --data: A list of two data frames:
 *data – A data frame containing gene expression values. Gene symbols should be column names, and the last column must  contain class labels (e.g., "Tumor", "Normal").
-*DE – A data frame with results from differential expression analysis. Expected columns: Gene.symbol, P.Value, adj.P.Val, and logFC.
+*DE – A data frame with results from differential expression analysis. Expected columns: Gene.symbol, logFC, P.Value, and adj.P.Val.
 
 --regulation_status: A character string indicating which genes to consider based on their regulation status. Must be one of:
 "Up": Upregulated genes
