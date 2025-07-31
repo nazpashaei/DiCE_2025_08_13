@@ -5,7 +5,7 @@
 #' @param data A list of 2 elements:
 #'   \itemize{
 #'     \item \code{data} - A data frame of gene expression data with gene symbols as column names and the last column as class labels (e.g., Tumor, Normal). The class labels can be customized using the \code{case_label} and \code{control_label} parameters.
-#'     \item \code{DE} - A data frame of differentially expressed genes (DEGs) with four columns: \code{Gene.symbol}, \code{P.Value}, \code{adj.P.Val}, and \code{logFC}.
+#'     \item \code{DE} - A data frame of differentially expressed genes (DEGs) with four columns: \code{Gene.symbol}, \code{logFC}, \code{P.Value}, and \code{adj.P.Val}.
 #'   }
 #' @param regulation_status A string specifying the direction of regulation to filter genes. Acceptable values: \code{"Up"}, \code{"Down"}, or \code{"Both"}.
 #' @param species A string specifying the species. Acceptable values: \code{"human"} (9606), \code{"mouse"} (10090), or \code{"rat"} (10116).
@@ -344,22 +344,13 @@ cat("Phase I =", nrow(dee1), "\n",
     "Phase II =", nrow(m2), "\n",
     "Phase III =", nrow(df2), "\n",
     "DiCe-genes =", length(common1), "\n")
-# Open a connection for writing
-file_conn <- file("DiCE.output.csv", open = "wt")
-
-# Write the summary information first
-writeLines(c(
-    paste("Phase I =", nrow(dee1)),
-    paste("Phase II =", nrow(m2)),
-    paste("Phase III =", nrow(df2)),
-    paste("DiCE-genes =", length(common1)),
-    ""  # Blank line before the table
-), file_conn)
 
   colnames(data$DE)[colnames(data$DE) == "Gene.symbol"] <- "gene_name"
 # Merge df2 columns (result, result.1, rank.2) into dee1 by gene_name
-dee1_merged <- merge(data$DE, df2[, "gene_name","Betweenness","Betweenness.1","result","Eig","Eig.1","result.1","rank.2")], 
-                     by = "gene_name", all.x = TRUE)
+dee1_merged <- merge(data$DE, 
+                     df2[, c("gene_name", "Betweenness", "Betweenness.1", "result", "Eig", "Eig.1", "result.1", "rank.2")],
+                     by = "gene_name", 
+                     all.x = TRUE)
 
 
 
@@ -374,6 +365,12 @@ dee1_merged$Phase <- apply(dee1_merged, 1, function(row) {
   if (length(phases) == 0) return("-")
   return(tail(phases, 1))  # return only the last (most recent) matched phase
 })
+  data$DE[[pval_type]]
+nonsig_idx <- is.na(dee1_merged[pval_type]) | 
+  is.na(dee1_merged$logFC) |
+  dee1_merged[pval_type] > pval_threshold | 
+  abs(dee1_merged$logFC) < log2fc_threshold
+  dee1_merged$Phase[nonsig_idx] <- "-"
 
 # Merge DiCE.genes column (Final.rank) into the merged data
 dee1_merged <- merge(dee1_merged, DiCE.genes[, c("gene_name", "Final.rank")], 
@@ -385,11 +382,43 @@ dee1_merged[is.na(dee1_merged)] <- "-"
 colnames(dee1_merged)<-c("Offical gene symbol from input file", "log2FC", "p-value","adj.P.Val","Betweenness.case","Betweenness.Control","DB","Eig.case","Eig.Control","DE","Ensemble.rank","last phase in DiCE","Final.rank");
 
 # Append the data
-write.table(dee1_merged, file = file_conn, sep = ",", row.names = FALSE, col.names = TRUE, append = TRUE)
+View(DiCE.genes)
 
-# Close the file connection
-close(file_conn)
-#------------------------------------------:) end 
+wb <- createWorkbook()
+addWorksheet(wb, "DiCE_Output")
+
+# Write summary info as a small table in the top rows
+summary_table <- data.frame(
+    Phase = c("Phase I", "Phase II", "Phase III", "DiCE-genes"),
+    Description = c(
+        paste(pval_type, "<", pval_threshold, "& |log2FC| >", log2fc_threshold),
+        "IG (mean)",
+        "Pearson cc",
+        method  # this uses the value of the variable `method`
+    ),
+    Count = c(nrow(dee1), nrow(m2), nrow(df2), length(common1))
+)
+
+writeData(wb, sheet = "DiCE_Output", x = summary_table, startRow = 1, colNames = TRUE)
+
+# Write a blank row after the summary for spacing
+writeData(wb, sheet = "DiCE_Output", x = "", startRow = nrow(summary_table) + 2, colNames = FALSE)
+
+# Write the merged data starting after the blank row
+writeData(wb, sheet = "DiCE_Output", x = dee1_merged, startRow = nrow(summary_table) + 4, colNames = TRUE)
+
+# Optionally, format gene symbol column as text to prevent Excel auto-formatting issues
+addStyle(
+  wb, sheet = "DiCE_Output", 
+  style = createStyle(numFmt = "@"), 
+  cols = 1, 
+  rows = (nrow(summary_table) + 5):(nrow(summary_table) + 4 + nrow(dee1_merged)), 
+  gridExpand = TRUE
+)
+
+# Save the workbook
+saveWorkbook(wb, "DiCE_output.xlsx", overwrite = TRUE)
+
   View(DiCE.genes)
   return(DiCE.genes)
 }
