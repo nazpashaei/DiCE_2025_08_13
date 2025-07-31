@@ -6,7 +6,7 @@ This R package provides a comprehensive framework for identifying and prioritizi
 
 The `DiCE_function` function takes a list of two elements:
 - `data`: A data frame of gene expression data with gene symbols as column names and class labels in the last column.
-- `DE`: A data frame of differentially expressed genes (DEGs) with columns `Gene.symbol`, `P.Value`, `adj.P.Val`, and `logFC`.
+- `DE`: A data frame of differentially expressed genes (DEGs) with columns `Gene.symbol`, `logFC`, `P.Value`, and adj.P.Val`.
 
 It performs the following steps:
 1. Preprocesses gene names to handle different formats.
