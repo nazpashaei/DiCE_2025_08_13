@@ -92,7 +92,7 @@ if (regulation_status == "Up") {
 }
    
   dee1=dee
-  colnames(dee1)=c("gene_name","logFC","P.Value","adj.P.Val",)
+  colnames(dee1)=c("gene_name","logFC","P.Value","adj.P.Val")
 
   #+++++++++++++++++++++++Phase II: Selection of the top discriminative genes from the candidate pool obtained in Phase I using the Information Gain (IG) filter approach.
 
@@ -368,7 +368,7 @@ dee1_merged$Phase <- apply(dee1_merged, 1, function(row) {
   return(tail(phases, 1))  # return only the last (most recent) matched phase
 })
   data$DE[[pval_type]]
-nonsig_idx <- is.na(dee1_merged[pval_type]) | 
+  nonsig_idx <- is.na(dee1_merged[pval_type]) | 
   is.na(dee1_merged$logFC) |
   dee1_merged[pval_type] > pval_threshold | 
   abs(dee1_merged$logFC) < log2fc_threshold
