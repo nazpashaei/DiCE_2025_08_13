@@ -333,8 +333,8 @@ if (regulation_status == "Up") {
     stop("Method must be one of: 'mean', 'top25', or 'median'")
   }
    
-  x1<- x[((df2$Betweenness >= B) | (df2$Betweenness.1 >= B1)),];dim(x1);
-  x2<- x[-which((df2$Eig<E)&(df2$Eig.1<E1)),];dim(x2)
+  x1<- x[((df2$Betweenness >= B) | (df2$Betweenness.1 >= B1)),];dim(x1)
+  x2<- x[((df2$Eig >= E) | (df2$Eig.1 >= E1)),];dim(x2)
 
   common1=intersect(x1$gene_name,x2$gene_name)
   common1
