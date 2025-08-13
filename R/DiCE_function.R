@@ -68,12 +68,12 @@ DiCE_function <- function(data,regulation_status,species,method,pval_threshold, 
 
   # Apply the function to each gene name
   #pseudogenes and lncRNA's
-  data$DE$Gene.symbol <- sapply(data$DE$Gene.symbol, process_gene_names)
-  colnames(data$data)<-sapply(colnames(data$data), process_gene_names)
-  data$DE <- subset(data$DE, !grepl("LOC", data$DE$Gene.symbol))
-  data$DE <- subset(data$DE, !grepl("LINC", data$DE$Gene.symbol))
+  #data$DE$Gene.symbol <- sapply(data$DE$Gene.symbol, process_gene_names)
+  #colnames(data$data)<-sapply(colnames(data$data), process_gene_names)
+  #data$DE <- subset(data$DE, !grepl("LOC", data$DE$Gene.symbol))
+  #data$DE <- subset(data$DE, !grepl("LINC", data$DE$Gene.symbol))
   #data$DE$Gene.symbol<-toupper(data$DE$Gene.symbol)
-  data$DE$Gene.symbol<-(data$DE$Gene.symbol)
+  #data$DE$Gene.symbol<-(data$DE$Gene.symbol)
 
 
   #Phase I: Construction of a candidate gene pool by DEA with a loose cutoff
@@ -380,16 +380,16 @@ dee1_merged <- merge(dee1_merged, DiCE.genes[, c("gene_name", "Final.rank")],
 
 dee1_merged[is.na(dee1_merged)] <- "-"
 
-dee1_merged<-dee1_merged %>%
-  mutate(
-    rank.2 = case_when(
-      Phase == "I"  ~ nrow(dee1),
-      Phase == "II" ~ nrow(m2),
-      Phase == "-" ~ nrow(data$DE),
-      TRUE ~ rank.2
+dee1_merged <- dee1_merged %>%
+    mutate(rank.2 = suppressWarnings(as.numeric(rank.2))) %>%  # convert to numeric if possible
+    mutate(
+        rank.2 = case_when(
+            Phase == "I"  ~ nrow(dee1),
+            Phase == "II" ~ nrow(m2),
+            Phase == "-"  ~ nrow(data$DE),
+            TRUE ~ rank.2  # keep old value
+        )
     )
-  )
-
 
 colnames(dee1_merged)<-c("Offical gene symbol from input file", "log2FC", "p-value","adj.P.Val","Betweenness.case","Betweenness.Control","DB","Eig.case","Eig.Control","DE","Ensemble.rank","last phase in DiCE","Final.rank");
 
