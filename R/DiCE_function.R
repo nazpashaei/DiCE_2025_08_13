@@ -359,7 +359,7 @@ dee1_merged <- merge(data$DE,
 # Create a new column indicating presence in each phase
 dee1_merged$Phase <- apply(dee1_merged, 1, function(row) {
   phases <- c()
-  if (row["gene_name"] %in% dee1$gene_name) phases <- c( "I")
+  if (row["gene_name"] %in% dee1$gene_name) phases <- c("I")
   if (row["gene_name"] %in% m2$gene_name) phases <- c("II")
   if (row["gene_name"] %in% df2$gene_name) phases <- c("III")
   if (row["gene_name"] %in% DiCE.genes$gene_name) phases <- c("DiCE")
@@ -379,6 +379,16 @@ dee1_merged <- merge(dee1_merged, DiCE.genes[, c("gene_name", "Final.rank")],
                      by = "gene_name", all.x = TRUE)
 
 dee1_merged[is.na(dee1_merged)] <- "-"
+
+dee1_merged<-dee1_merged %>%
+  mutate(
+    rank.2 = case_when(
+      Phase == "I"  ~ nrow(dee1),
+      Phase == "II" ~ nrow(m2),
+      Phase == "-" ~ nrow(data$DE),
+      TRUE ~ rank.2
+    )
+  )
 
 
 colnames(dee1_merged)<-c("Offical gene symbol from input file", "log2FC", "p-value","adj.P.Val","Betweenness.case","Betweenness.Control","DB","Eig.case","Eig.Control","DE","Ensemble.rank","last phase in DiCE","Final.rank");
