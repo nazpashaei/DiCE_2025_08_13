@@ -210,18 +210,14 @@ if (regulation_status == "Up") {
   colnames(sss)=c("source", "target", "weight")
   g <- graph_from_data_frame(sss,directed = FALSE)
   is_weighted(g)
-  g <- set_edge_attr(g, "weight", value=(1-(sss$weight))+0.001)
-  g1 <- set_edge_attr(g, "weight", value=sss$weight)
+  g1 <- set_edge_attr(g, "weight", value=(1-(sss$weight))+0.001)
+  g2 <- set_edge_attr(g, "weight", value=sss$weight)
 
-  E(g)$weight[is.na(E(g)$weight)] <- 1
+  E(g1)$weight[is.na(E(g1)$weight)] <- 1
 
-  V(g); E(g)
-  gsize(g)
-  gorder(g)
-  is_weighted(g)
   #Phase IV: Topological analysis of sample-specific weighted PPI networks from the perspectives of Betweenness and Eigenvector centrality, followed by differential analysis on each centrality measure of individual genes.
   Strength=sort(strength(g),decreasing = TRUE);rank=seq(1,length(Strength),1);Strength=cbind(Strength,rank);#View(Strength)
-  centralities <- cbind(Eig=evcent(g1)$vector,Betweenness=betweenness(g));#View(centralities)
+  centralities <- cbind(Eig=evcent(g2)$vector,Betweenness=betweenness(g1));#View(centralities)
 
   centralities.Normal <-centralities
   #***********************************
@@ -253,16 +249,12 @@ if (regulation_status == "Up") {
   colnames(sss)=c("source", "target", "weight")
   g <- graph_from_data_frame(sss,directed = FALSE)
   is_weighted(g)
-  g <- set_edge_attr(g, "weight", value=(1-(sss$weight))+0.001)
-  g1 <- set_edge_attr(g, "weight", value=sss$weight)
+  g1 <- set_edge_attr(g, "weight", value=(1-(sss$weight))+0.001)
+  g2 <- set_edge_attr(g, "weight", value=sss$weight)
 
-  E(g)$weight[is.na(E(g)$weight)] <- 1
-  V(g); E(g)
-  gsize(g)
-  gorder(g)
-  is_weighted(g)
-  Strength=sort(strength(g),decreasing = TRUE);rank=seq(1,length(Strength),1);Strength=cbind(Strength,rank);#View(Strength)
-  centralities <- cbind(Eig=evcent(g1)$vector,Betweenness=betweenness(g));#View(centralities)
+  E(g1)$weight[is.na(E(g1)$weight)] <- 1
+ 
+  centralities <- cbind(Eig=evcent(g2)$vector,Betweenness=betweenness(g1));#View(centralities)
 
   centralities.Tumor <-centralities
 
